@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "/a5/lEsXfhA9O8R2XYc6TLuIQCjIleYEVPaQK367n4vg1bUpLQvuo7fqHBBOktaD2RIU0dYtEY6oLUcS9BqZ2A==",
+  "success": true,
+  "projectFilePath": "D:\\c#-projects\\HW_21_03_23_properties\\HW_21_03_23_properties\\HW_21_03_23_properties.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Влад\\.nuget\\packages\\faker.net\\2.0.154\\faker.net.2.0.154.nupkg.sha512",
+    "C:\\Users\\Влад\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\Влад\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
