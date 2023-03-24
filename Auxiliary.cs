@@ -23,8 +23,8 @@ namespace HW_21_03_23_properties
 
     public class RandomDataForGroup
     {
-        public List<string> groupNames = new List<string>() { "P10", "P11", "P12", "P13", "P14", "P15" };
-        public List<string> groupSpecializations = new List<string>() { "C++", "JavaScript", "C", "C#", "Python", "Java", "Ruby", "PHP" };
-        public List<int> coursesNumber = new List<int>() { 1, 2, 3, 4, 5 };
+        public List<string> GroupNames { get; } = new List<string>() { "P10", "P11", "P12", "P13", "P14", "P15" };
+        public List<string> GroupSpecializations { get; } = new List<string>() { "C++", "JavaScript", "C", "C#", "Python", "Java", "Ruby", "PHP" };
+        public List<int> CoursesNumber { get; } = new List<int>() { 1, 2, 3, 4, 5 };
     }
 }
