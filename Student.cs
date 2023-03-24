@@ -18,16 +18,133 @@ namespace HW_21_03_23_properties
         private List<int> hometasks = new List<int>();
         private List<int> exams = new List<int>();
 
+        public int Id
+        {
+            set
+            {
+                this.id = value;
+            }
+            get
+            {
+                return this.id;
+            }
+        }
+        public string Name
+        {
+            set
+            {
+                if (String.IsNullOrEmpty(value) || String.IsNullOrWhiteSpace(value)) throw new StringException();
+                this.name = value;
+            }
+            get
+            {
+                return this.name;
+            }
+        }
+        public string Lastname
+        {
+            set
+            {
+                if (String.IsNullOrEmpty(value) || String.IsNullOrWhiteSpace(value)) throw new StringException();
+                this.lastname = value;
+            }
+            get
+            {
+                return this.lastname;
+            }
+        }
+        public string Surname
+        {
+            set
+            {
+                if (String.IsNullOrEmpty(value) || String.IsNullOrWhiteSpace(value)) throw new StringException();
+                this.surname = value;
+            }
+            get
+            {
+                return this.surname;
+            }
+        }
+        public string PhoneNumber
+        {
+            set
+            {
+                string phoneRegexp = @"^\(\d{3}\)\d{3}\-\d{4}$";
+                if (Regex.IsMatch(value, phoneRegexp)) this.phoneNumber = value;
+                else this.phoneNumber = "(000)000-0000";
+            }
+            get
+            {
+                return this.phoneNumber;
+            }
+        }
+        public DateTime Birthday
+        {
+            set
+            {
+                this.birthday = value;
+            }
+            get
+            {
+                return this.birthday;
+            }
+        }
+        public Address Address
+        {
+            set
+            {
+                this.address = value;
+            }
+            get
+            {
+                return this.address;
+            }
+        }
+
+        public List<int> Offsets
+        {
+            set
+            {
+                this.offsets = new List<int>();
+            }
+            get
+            {
+                return this.offsets;
+            }
+        }
+        public List<int> Hometasks
+        {
+            set
+            {
+                this.hometasks = new List<int>();
+            }
+            get
+            {
+                return this.hometasks;
+            }
+        }
+        public List<int> Exams
+        {
+            set
+            {
+                this.exams = new List<int>();
+            }
+            get
+            {
+                return this.exams;
+            }
+        }
+
         public Student(string name, string lastname, string surname, DateTime birthday, string phoneNumber, string city, string street, string homeNumber)
         {
-            setName(name);
-            setLastname(lastname);
-            setSurname(surname);
-            setPhoneNumber(phoneNumber);
-            setBirthday(birthday);
-            setAddress(city, street, homeNumber);
+            Name = name;
+            Lastname = lastname;
+            Surname = surname;
+            PhoneNumber = phoneNumber;
+            Birthday = birthday;
+            Address = new Address(city, street, homeNumber);            
+            Id = new Random().Next(357943, 8357235);
             fillingLists();
-            setId();
         }
         public Student(string name, string lastname, string surname, DateTime birthday, string phoneNumber) :
             this(name, lastname, surname, birthday, phoneNumber, "None", "None", "None")
@@ -38,34 +155,14 @@ namespace HW_21_03_23_properties
         public Student() :
             this("None", "None", "None", new DateTime(1, 1, 1), "(000)000-0000", "None", "None", "None")
         { }
+                               
+        public double getAverageMark()
+        {
+            double avgMark = 0;
+            avgMark += Offsets.Average() + Hometasks.Average() + Exams.Average();
 
-        // setters
-        private void setId() { id = new Random().Next(357943, 8357235); }
-        public void setName(string name)
-        {
-            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name)) throw new StringException();
-            this.name = name;
+            return Math.Truncate(avgMark);
         }
-        public void setLastname(string lastname)
-        {
-            if (String.IsNullOrEmpty(lastname) || String.IsNullOrWhiteSpace(lastname)) throw new StringException();
-            this.lastname = lastname;
-        }
-        public void setSurname(string surname)
-        {
-            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(surname)) throw new StringException();
-            this.surname = surname;
-        }
-        public void setPhoneNumber(string phoneNumber)
-        {
-            string phoneRegexp = @"^\(\d{3}\)\d{3}\-\d{4}$";
-            if (Regex.IsMatch(phoneNumber, phoneRegexp)) this.phoneNumber = phoneNumber;
-            else this.phoneNumber = "(000)000-0000";
-            /// Метод Regex.IsMatch() принимает два параметра: строку для поиска совпадения и регулярное выражение.
-            /// Если любой из этих параметров имеет значение null, метод Regex.IsMatch() выбрасывает исключение System.ArgumentNullException()            
-        }
-        public void setBirthday(DateTime birthday) { this.birthday = birthday; }
-        public void setAddress(string city, string street, string homeNumber) { this.address = new Address(city, street, homeNumber); }
         public void fillingLists()
         {
             for (int i = 0; i < 7; ++i)
@@ -74,23 +171,7 @@ namespace HW_21_03_23_properties
                 this.hometasks.Add(new Random().Next(1, 13));
                 this.exams.Add(new Random().Next(1, 13));
             }
-        }
-
-        // getters
-        public int getId() { return this.id; }
-        public string getName() { return this.name; }
-        public string getLastname() { return this.lastname; }
-        public string getSurname() { return this.surname; }
-        public string getPhoneNumber() { return this.phoneNumber; }
-        public DateTime getBirthday() { return this.birthday; }
-        public Address getAddress() { return this.address; }
-        public double getAverageMark()
-        {
-            double avgMark = 0;
-            avgMark += getListOffsets().Average() + getListHometasks().Average() + getListExams().Average();
-
-            return avgMark;
-        }
+        }        
 
         // operator overloading
         public override int GetHashCode() { return getAverageMark().GetHashCode(); }
@@ -131,21 +212,17 @@ namespace HW_21_03_23_properties
         }
         // operator overloading
 
-        public List<int> getListOffsets() { return this.offsets; }
-        public List<int> getListHometasks() { return this.hometasks; }
-        public List<int> getListExams() { return this.exams; }
-
-        public string getListOffsetsForToString() { return string.Join(" ", getListOffsets()); }
-        public string getListHometasksForToString() { return string.Join(" ", getListHometasks()); }
-        public string getListExamsForToString() { return string.Join(" ", getListExams()); }
+        public string getListOffsetsForToString() { return string.Join(" ", Offsets); }
+        public string getListHometasksForToString() { return string.Join(" ", Hometasks); }
+        public string getListExamsForToString() { return string.Join(" ", Exams); }
 
         public override string ToString()
         {
-            return ($"ID: {getId()}\n" +
-                $"Student: {getLastname()} {getName()} {getSurname()}\n" +
-                $"Birthday: {getBirthday().Date.ToString("d")}\n" +
-                $"Address: {getAddress()}\n" +
-                $"Phone number: {getPhoneNumber()}\n" +
+            return ($"ID: {Id}\n" +
+                $"Student: {Lastname} {Name} {Surname}\n" +
+                $"Birthday: {Birthday.Date.ToString("d")}\n" +
+                $"Address: {Address}\n" +
+                $"Phone number: {PhoneNumber}\n" +
                 $"Rating\n" +
                 $"Scores offsets - {getListOffsetsForToString()}\n" +
                 $"Scores hometasks - {getListHometasksForToString()}\n" +

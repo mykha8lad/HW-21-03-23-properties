@@ -10,56 +10,141 @@ using ExceptionLibrary;
 namespace HW_21_03_23_properties
 {
     public class Group
-    {
-        private List<Student> students = new List<Student>();
+    {        
         RandomDataForGroup randomData = new RandomDataForGroup();
+
+        private List<Student> students = new List<Student>();
+        public List<Student> Students
+        {
+            set
+            {
+                students = value;
+            }
+            get
+            {
+                return this.students;
+            }
+        }
 
         private int studentsInGroup = 10;
         private string groupName;
         private string groupSpecialization;
         private int courseNumber;
 
+        public int StudentsInGroup
+        {
+            set
+            {
+                if (value < 5 || value > 15) throw new CountStudentsException();
+
+                if (value > this.StudentsInGroup)
+                {
+                    for (int student = value; student != StudentsInGroup; --student)
+                    {
+                        string phoneRegexp = @"^\(\d{3}\)\d{3}\-\d{4}$";
+                        string phoneNumber;
+                        do
+                        {
+                            phoneNumber = Faker.Phone.Number();
+                        } while (!Regex.IsMatch(phoneNumber, phoneRegexp));
+                        Random random = new Random();
+                        DateTime birthday = new DateTime(random.Next(2003, 2007), random.Next(1, 13), random.Next(1, 29));
+                        Students.Add(new Student(Faker.Name.First(), Faker.Name.Last(), Faker.Name.Middle(), birthday, phoneNumber, Faker.Address.City(), Faker.Address.StreetName(), Faker.Address.ZipCode()));
+                    }
+                }
+                else if (value < this.StudentsInGroup)
+                {
+                    for (int student = StudentsInGroup; student != value; --student)
+                    {
+                        Students.RemoveAt(student - 1);
+                    }
+                }
+
+                this.studentsInGroup = value;
+            }
+            get
+            {
+                return this.studentsInGroup;
+            }
+        }
+        public string GroupName
+        {
+            set
+            {
+                if (String.IsNullOrEmpty(value) || String.IsNullOrWhiteSpace(value)) throw new StringException();
+                this.groupName = value;
+            }
+            get
+            {
+                return this.groupName;
+            }
+        }
+        public string GroupSpecialization
+        {
+            set
+            {
+                if (String.IsNullOrEmpty(value) || String.IsNullOrWhiteSpace(value)) throw new StringException();
+                this.groupSpecialization = value;
+            }
+            get
+            {
+                return this.groupSpecialization;
+            }
+        }
+        public int CourseNumber
+        {
+            set
+            {
+                if (value < 1 || value > 5) throw new CourseNumberException();
+                this.courseNumber = value;
+            }
+            get
+            {
+                return this.courseNumber;
+            }
+        }
+
         public Group()
         {
-            createGroup(randomData.groupNames[new Random().Next(randomData.groupNames.Count)], randomData.groupSpecializations[new Random().Next(randomData.groupSpecializations.Count)], randomData.coursesNumber[new Random().Next(randomData.coursesNumber.Count)]);
+            createGroup(randomData.GroupNames[new Random().Next(randomData.GroupNames.Count)], randomData.GroupSpecializations[new Random().Next(randomData.GroupSpecializations.Count)], randomData.CoursesNumber[new Random().Next(randomData.CoursesNumber.Count)]);
         }
         public Group(Group group)
         {
-            setGroupName(group.getGroupName());
-            setGroupSpecialization(group.getGroupSpecialization());
-            setCourseNumber(group.getCourseNumber());
-            copyToThisListStudents(group.getListStudents());
+            GroupName = group.GroupName;
+            GroupSpecialization = group.GroupSpecialization;
+            CourseNumber = group.CourseNumber;
+            copyToThisListStudents(group.Students);
             group.clearGroup();
             group = null;
         }
         public Group(List<Student> oldListStudents)
         {
-            setGroupName(randomData.groupNames[new Random().Next(randomData.groupNames.Count)]);
-            setGroupSpecialization(randomData.groupSpecializations[new Random().Next(randomData.groupSpecializations.Count)]);
-            setCourseNumber(randomData.coursesNumber[new Random().Next(randomData.coursesNumber.Count)]);
+            GroupName = randomData.GroupNames[new Random().Next(randomData.GroupNames.Count)];
+            GroupSpecialization = randomData.GroupSpecializations[new Random().Next(randomData.GroupSpecializations.Count)];
+            CourseNumber = randomData.CoursesNumber[new Random().Next(randomData.CoursesNumber.Count)];
             copyToThisListStudents(oldListStudents);
             oldListStudents.Clear();
         }
         public Group(string groupName, string groupSpecialization, int courseNumber, int countStudents)
         {
-            setCountStudents(countStudents);
+            StudentsInGroup = countStudents;
             createGroup(groupName, groupSpecialization, courseNumber);
         }
         public Group(List<Student> oldListStudents, string groupName, string groupSpecialization, int courseNumber)
         {
-            setGroupName(groupName);
-            setGroupSpecialization(groupSpecialization);
-            setCourseNumber(courseNumber);
+            GroupName = groupName;
+            GroupSpecialization = groupSpecialization;
+            CourseNumber = courseNumber;
             copyToThisListStudents(oldListStudents);
             oldListStudents.Clear();
         }
 
-        private void deleteStudent(Student student) { this.students.Remove(student); }
+        private void deleteStudent(Student student) { Students.Remove(student); }
         private void copyToThisListStudents(List<Student> oldListStudents)
         {
             foreach (Student student in oldListStudents)
             {
-                this.students.Add(student);
+                this.Students.Add(student);
             }
         }
         private void clearGroup()
@@ -70,66 +155,14 @@ namespace HW_21_03_23_properties
             courseNumber = 0;
         }
 
-        // setters
-        public void setCountStudents(int countStudents)
-        {
-            if (countStudents < 5 || countStudents > 15) throw new CountStudentsException();
-
-            if (countStudents > this.getCountStudents())
-            {
-                for (int student = countStudents; student != getCountStudents(); --student)
-                {
-                    string phoneRegexp = @"^\(\d{3}\)\d{3}\-\d{4}$";
-                    string phoneNumber;
-                    do
-                    {
-                        phoneNumber = Faker.Phone.Number();
-                    } while (!Regex.IsMatch(phoneNumber, phoneRegexp));
-                    Random random = new Random();
-                    DateTime birthday = new DateTime(random.Next(2003, 2007), random.Next(1, 13), random.Next(1, 29));
-                    students.Add(new Student(Faker.Name.First(), Faker.Name.Last(), Faker.Name.Middle(), birthday, phoneNumber, Faker.Address.City(), Faker.Address.StreetName(), Faker.Address.ZipCode()));
-                }
-            }
-            else if (countStudents < this.getCountStudents())
-            {
-                for (int student = getCountStudents(); student != countStudents; --student)
-                {
-                    students.RemoveAt(student - 1);
-                }
-            }
-
-            this.studentsInGroup = countStudents;
-        }
-        public void setGroupName(string groupName)
-        {
-            if (String.IsNullOrEmpty(groupName) || String.IsNullOrWhiteSpace(groupName)) throw new StringException();
-            this.groupName = groupName;
-        }
-        public void setGroupSpecialization(string groupSpecialization)
-        {
-            if (String.IsNullOrEmpty(groupSpecialization) || String.IsNullOrWhiteSpace(groupSpecialization)) throw new StringException();
-            this.groupSpecialization = groupSpecialization;
-        }
-        public void setCourseNumber(int courseNumber)
-        {
-            if (courseNumber < 1 || courseNumber > 5) throw new CourseNumberException();
-            this.courseNumber = courseNumber;
-        }
-
-        // getters
-        public int getCountStudents() { return this.studentsInGroup; }
-        public string getGroupName() { return this.groupName; }
-        public string getGroupSpecialization() { return this.groupSpecialization; }
-        public int getCourseNumber() { return this.courseNumber; }
-
         // operator overloading
-        public override int GetHashCode() { return getCountStudents().GetHashCode(); }
+        public override int GetHashCode() { return StudentsInGroup.GetHashCode(); }
         public override bool Equals(object obj)
         {
             Group group = obj as Group;
             if (group == null || GetType() != group.GetType()) { throw new ArgumentException(); }
 
-            return this.getCountStudents() == group.getCountStudents();
+            return this.StudentsInGroup == group.StudentsInGroup;
         }
 
         public static bool operator ==(Group firstGroup, Group secondGroup)
@@ -138,36 +171,36 @@ namespace HW_21_03_23_properties
 
             if (object.ReferenceEquals(firstGroup, null) || object.ReferenceEquals(secondGroup, null)) { return false; }
 
-            return firstGroup.getCountStudents() == secondGroup.getCountStudents();
+            return firstGroup.StudentsInGroup == secondGroup.StudentsInGroup;
         }
         public static bool operator !=(Group firstGroup, Group secondGroup) { return !(firstGroup == secondGroup); }
 
         public static bool operator >(Group firstGroup, Group secondGroup)
         {
-            return firstGroup.getCountStudents() > secondGroup.getCountStudents();
+            return firstGroup.StudentsInGroup > secondGroup.StudentsInGroup;
         }
         public static bool operator <(Group firstGroup, Group secondGroup)
         {
-            return firstGroup.getCountStudents() > secondGroup.getCountStudents();
+            return firstGroup.StudentsInGroup > secondGroup.StudentsInGroup;
         }
 
         public static bool operator >=(Group firstGroup, Group secondGroup)
         {
-            return firstGroup.getCountStudents() > secondGroup.getCountStudents();
+            return firstGroup.StudentsInGroup > secondGroup.StudentsInGroup;
         }
         public static bool operator <=(Group firstGroup, Group secondGroup)
         {
-            return firstGroup.getCountStudents() > secondGroup.getCountStudents();
+            return firstGroup.StudentsInGroup > secondGroup.StudentsInGroup;
         }
         // operator overloading
 
         public void createGroup(string groupName, string groupSpecialization, int courseNumber)
         {
-            setGroupName(groupName);
-            setGroupSpecialization(groupSpecialization);
-            setCourseNumber(courseNumber);
+            GroupName = groupName;
+            GroupSpecialization = groupSpecialization;
+            CourseNumber = courseNumber;
 
-            for (int student = 1; student <= getCountStudents(); ++student)
+            for (int student = 1; student <= StudentsInGroup; ++student)
             {
                 string phoneRegexp = @"^\(\d{3}\)\d{3}\-\d{4}$";
                 string phoneNumber;
@@ -179,20 +212,7 @@ namespace HW_21_03_23_properties
                 DateTime birthday = new DateTime(random.Next(2003, 2007), random.Next(1, 13), random.Next(1, 29));
                 students.Add(new Student(Faker.Name.First(), Faker.Name.Last(), Faker.Name.Middle(), birthday, phoneNumber, Faker.Address.City(), Faker.Address.StreetName(), Faker.Address.ZipCode()));
             }
-        }
-
-        public List<Student> getListStudents() { return this.students; }
-        private string getAllStudentsInfo()
-        {
-            students.Sort((firstStudent, secondStudent) => firstStudent.getLastname().CompareTo(secondStudent.getLastname()));
-            return string.Join("\n\n", getListStudents());
-        }
-        public override string ToString()
-        {
-            return $"Group: {getGroupName()}. Specialization: {getGroupSpecialization()}. Course: {getCourseNumber()}. Count students: {getCountStudents()}\n" +
-                $"--------------------------------------------------------------------------------\n" +
-                $"{getAllStudentsInfo()}\n";
-        }
+        }                
 
         public void addStudentInGroup(Student student) { students.Add(student); }
 
@@ -202,12 +222,12 @@ namespace HW_21_03_23_properties
             bool flag = true;
             Student st = null;
 
-            Console.WriteLine($"Enter id student this group ({getGroupName()})");
+            Console.WriteLine($"Enter id student this group ({GroupName})");
             int id = int.Parse(Console.ReadLine());
 
             foreach (Student student in students)
             {
-                if (student.getId() == id)
+                if (student.Id == id)
                 {
                     st = student;
                     break;
@@ -233,7 +253,7 @@ namespace HW_21_03_23_properties
                             Console.Write("> ");
                             stName = Console.ReadLine();
                         } while (String.IsNullOrEmpty(stName));
-                        st.setName(stName);
+                        st.Name = stName;
                         break;
                     case (int)StudentMenu.STUDENT_LASTNAME:
                         Console.WriteLine("Enter lastname student");
@@ -243,7 +263,7 @@ namespace HW_21_03_23_properties
                             Console.Write("> ");
                             stLastName = Console.ReadLine();
                         } while (String.IsNullOrEmpty(stLastName));
-                        st.setLastname(stLastName);
+                        st.Lastname = stLastName;
                         break;
                     case (int)StudentMenu.STUDENT_SURNAME:
                         Console.WriteLine("Enter surname student");
@@ -253,7 +273,7 @@ namespace HW_21_03_23_properties
                             Console.Write("> ");
                             stSurname = Console.ReadLine();
                         } while (String.IsNullOrEmpty(stSurname));
-                        st.setSurname(stSurname);
+                        st.Surname = stSurname;
                         break;
                     case (int)StudentMenu.STUDENT_PHONE_NUMBER:
                         Console.WriteLine("Enter phone student (xxx)xxx-xxxx");
@@ -263,7 +283,7 @@ namespace HW_21_03_23_properties
                             Console.Write("> ");
                             phoneNumber = Console.ReadLine();
                         } while (String.IsNullOrEmpty(phoneNumber));
-                        st.setPhoneNumber(phoneNumber);
+                        st.PhoneNumber = phoneNumber;
                         break;
                     case (int)StudentMenu.STUDENT_BIRTHDAY:
                         Console.WriteLine("Enter birthday xx.xx.xxxx");
@@ -273,7 +293,7 @@ namespace HW_21_03_23_properties
                             Console.Write("> ");
                             birthday = DateTime.Parse(Console.ReadLine());
                         } while (String.IsNullOrEmpty(birthday.ToString("d")));
-                        st.setBirthday(birthday);
+                        st.Birthday = birthday;
                         break;
                     case (int)StudentMenu.STUDENT_ADDRESS:
                         string city;
@@ -290,7 +310,7 @@ namespace HW_21_03_23_properties
                             Console.Write("Home Number > ");
                             homeNumber = Console.ReadLine();
                         } while (String.IsNullOrEmpty(city) & String.IsNullOrEmpty(street) & String.IsNullOrEmpty(homeNumber));
-                        st.setAddress(city, street, homeNumber);
+                        st.Address = new Address(city, street, homeNumber);
                         break;
                     case (int)StudentMenu.STUDENT_EXIT:
                         flag = false;
@@ -324,8 +344,8 @@ namespace HW_21_03_23_properties
                         {
                             Console.Write("> ");
                             gName = Console.ReadLine();
-                        } while (!randomData.groupNames.Contains(gName));
-                        setGroupName(gName);
+                        } while (!randomData.GroupNames.Contains(gName));
+                        GroupName = gName;
                         break;
                     case (int)GroupMenu.GROUP_SPECIALIZATION:
                         Console.WriteLine("Enter group specialization");
@@ -334,8 +354,8 @@ namespace HW_21_03_23_properties
                         {
                             Console.Write("> ");
                             gSpec = Console.ReadLine();
-                        } while (!randomData.groupSpecializations.Contains(gSpec));
-                        setGroupSpecialization(gSpec);
+                        } while (!randomData.GroupSpecializations.Contains(gSpec));
+                        GroupSpecialization = gSpec;
                         break;
                     case (int)GroupMenu.COURSE_NUMBER:
                         Console.WriteLine("Enter course number");
@@ -344,8 +364,8 @@ namespace HW_21_03_23_properties
                         {
                             Console.Write("> ");
                             gCourse = int.Parse(Console.ReadLine());
-                        } while (!randomData.coursesNumber.Contains(gCourse));
-                        setCourseNumber(gCourse);
+                        } while (!randomData.CoursesNumber.Contains(gCourse));
+                        CourseNumber = gCourse;
                         break;
                     case (int)GroupMenu.GROUP_EXIT:
                         flag = false;
@@ -390,12 +410,12 @@ namespace HW_21_03_23_properties
 
         public void studentTransfer(Group group)
         {
-            Console.WriteLine($"Enter id student this group ({getGroupName()}), for transfer in group {group.getGroupName()}");
+            Console.WriteLine($"Enter id student this group ({GroupName}), for transfer in group {group.GroupName}");
             int id = int.Parse(Console.ReadLine());
 
             foreach (Student student in students)
             {
-                if (student.getId() == id)
+                if (student.Id == id)
                 {
                     group.students.Add(student);
                     deleteStudent(student);
@@ -406,7 +426,7 @@ namespace HW_21_03_23_properties
 
         public void deletingAllStudentPassSession()
         {
-            students.RemoveAll(s => s.getListOffsets().Any(score => score < 7));
+            students.RemoveAll(s => s.Offsets.Any(score => score < 7));
         }
         public void deleteFailedStudent()
         {
@@ -415,7 +435,7 @@ namespace HW_21_03_23_properties
             foreach (Student student in students)
             {
                 double avg = 0;
-                avg += student.getListOffsets().Average() + student.getListHometasks().Average() + student.getListExams().Average();
+                avg += student.Offsets.Average() + student.Hometasks.Average() + student.Exams.Average();
 
                 if (avg < minAvg)
                 {
@@ -423,8 +443,20 @@ namespace HW_21_03_23_properties
                     failedStudent = student;
                 }
             }
-            Console.WriteLine($"Student {failedStudent.getName()} ({failedStudent.getId()}) remove");
+            Console.WriteLine($"Student {failedStudent.Name} ({failedStudent.Id}) remove");
             deleteStudent(failedStudent);
+        }
+
+        private string getAllStudentsInfo()
+        {
+            students.Sort((firstStudent, secondStudent) => firstStudent.Lastname.CompareTo(secondStudent.Lastname));
+            return string.Join("\n\n", Students);
+        }
+        public override string ToString()
+        {
+            return $"Group: {GroupName}. Specialization: {GroupSpecialization}. Course: {CourseNumber}. Count students: {StudentsInGroup}\n" +
+                $"--------------------------------------------------------------------------------\n" +
+                $"{getAllStudentsInfo()}\n";
         }
     }
 }
