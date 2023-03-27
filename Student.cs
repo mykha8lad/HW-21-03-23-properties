@@ -105,7 +105,9 @@ namespace HW_21_03_23_properties
         {
             set
             {
-                this.offsets = new List<int>();
+                if (value == null)
+                    throw new ArgumentException();
+                this.offsets = value;
             }
             get
             {
@@ -116,7 +118,9 @@ namespace HW_21_03_23_properties
         {
             set
             {
-                this.hometasks = new List<int>();
+                if (value == null)
+                    throw new ArgumentException();
+                this.hometasks = value;
             }
             get
             {
@@ -127,7 +131,9 @@ namespace HW_21_03_23_properties
         {
             set
             {
-                this.exams = new List<int>();
+                if (value == null)
+                    throw new ArgumentException();
+                this.exams = value;
             }
             get
             {
